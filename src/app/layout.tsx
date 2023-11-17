@@ -23,7 +23,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={`${GeistSans.variable}${GeistMono.variable}`}>
+        <body className={`${GeistMono.variable}`}>
           <TRPCReactProvider cookies={cookies().toString()}>
             <ThemeProvider attribute="class" defaultTheme="dark">
               {children}
