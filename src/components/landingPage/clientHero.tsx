@@ -5,10 +5,7 @@ import { Dialog } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 
-const navigation = [
-  { name: "Pricing", href: "/pricing", disabled: false },
-  { name: "Contact Us", href: "#contact", disabled: false },
-];
+const navigation = [{ name: "Pricing", href: "#pricing", disabled: false }];
 
 const ClientHeroSection = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

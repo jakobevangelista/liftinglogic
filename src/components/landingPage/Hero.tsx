@@ -1,13 +1,13 @@
-import { Bars3Icon } from "@heroicons/react/24/outline";
-import Image from "next/image";
 import Link from "next/link";
 
+import { Button } from "../ui/button";
 import ClientHeroSection from "./clientHero";
-import { Button, buttonVariants } from "../ui/button";
+import { UserButton, currentUser } from "@clerk/nextjs";
 
-const navigation = [{ name: "Pricing", href: "/pricing", disabled: false }];
+const navigation = [{ name: "Pricing", href: "#pricing", disabled: false }];
 
-const Hero = () => {
+const Hero = async () => {
+  const user = await currentUser();
   return (
     <>
       <div>
@@ -24,7 +24,7 @@ const Hero = () => {
                   <span className="tracking-tight hover:cursor-pointer">
                     lifting<span className="text-primary">logic</span>
                   </span>
-                  <sup className="absolute left-[calc(100%+.1rem)] top-0 text-xs font-bold text-black">
+                  <sup className="absolute left-[calc(100%+.1rem)] top-0 text-xs font-bold text-white">
                     [BETA]
                   </sup>
                 </h1>
@@ -47,17 +47,29 @@ const Hero = () => {
                 </Link>
               ))}
             </div>
-            <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-              <a
-                href="/sign-in"
-                className="text-sm font-semibold leading-6 text-gray-900"
-              >
-                Log in <span aria-hidden="true">&rarr;</span>
-              </a>
+            <div className="hidden items-center gap-x-6 lg:flex lg:flex-1 lg:justify-end">
+              {user === null ? (
+                <Button asChild>
+                  <Link
+                    href="/sign-in"
+                    className="text-sm font-semibold leading-6 "
+                  >
+                    Log in <span aria-hidden="true">&rarr;</span>
+                  </Link>
+                </Button>
+              ) : (
+                <Link
+                  href="/dashboard"
+                  className="flex cursor-pointer flex-row items-center gap-4 text-sm font-semibold leading-6"
+                >
+                  Dashboard
+                  <UserButton />
+                </Link>
+              )}
             </div>
           </nav>
         </header>
-        {/* <div className="flex items-center justify-center overflow-auto"> */}
+
         <div className="relative isolate mt-16 px-6 pt-14 lg:px-8">
           <div
             className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
@@ -78,7 +90,7 @@ const Hero = () => {
               </h1>
               <p className="mt-6 text-lg leading-8 text-muted-foreground">
                 Empowering coaches with intuitive tools to help them manage
-                their clients and grow their business.
+                their team
               </p>
               <div className="mt-10 flex items-center justify-center gap-x-6">
                 <Button asChild>
@@ -100,7 +112,6 @@ const Hero = () => {
             />
           </div>
         </div>
-        {/* </div> */}
       </div>
     </>
   );
