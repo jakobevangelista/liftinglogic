@@ -1,4 +1,4 @@
-import { SignIn, currentUser } from "@clerk/nextjs";
+import { SignUp, currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
 export default async function Page() {
@@ -22,14 +22,7 @@ export default async function Page() {
           />
         </div>
         <div className="mx-auto flex max-w-3xl flex-col place-content-center items-center justify-center py-32 sm:py-48 lg:py-56">
-          <SignIn
-            afterSignInUrl={"/dashboard"}
-            appearance={{
-              elements: {
-                footer: "hidden",
-              },
-            }}
-          />
+          <SignUp afterSignInUrl={"/dashboard"} />
         </div>
         <div
           className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"

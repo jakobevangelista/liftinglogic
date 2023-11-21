@@ -7,12 +7,13 @@
  * need to use are documented accordingly near the end.
  */
 import { TRPCError, initTRPC } from "@trpc/server";
-import { type NextRequest } from "next/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { db } from "@/server/db";
-import { currentUser } from "@clerk/nextjs";
+import { users } from "@/server/db/schema";
+import { auth } from "@clerk/nextjs";
+import { and, eq } from "drizzle-orm";
 
 /**
  * 1. CONTEXT
@@ -20,43 +21,22 @@ import { currentUser } from "@clerk/nextjs";
  * This section defines the "contexts" that are available in the backend API.
  *
  * These allow you to access things when processing a request, like the database, the session, etc.
+ *
+ * This helper generates the "internals" for a tRPC context. The API handler and RSC clients each
+ * wrap this and provides the required context.
+ *
+ * @see https://trpc.io/docs/server/context
  */
 
-interface CreateContextOptions {
-  headers: Headers;
-}
-
-/**
- * This helper generates the "internals" for a tRPC context. If you need to use it, you can export
- * it from here.
- *
- * Examples of things you may need it for:
- * - testing, so we don't have to mock Next.js' req/res
- * - tRPC's `createSSGHelpers`, where we don't have req/res
- *
- * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
- */
-export const createInnerTRPCContext = async (opts: CreateContextOptions) => {
-  const user = await currentUser();
-  return {
-    headers: opts.headers,
-    db,
-    user,
-  };
-};
-
-/**
- * This is the actual context you will use in your router. It will be used to process every request
- * that goes through your tRPC endpoint.
- *
- * @see https://trpc.io/docs/context
- */
-export const createTRPCContext = (opts: { req: NextRequest }) => {
+// eslint-disable-next-line @typescript-eslint/require-await
+export const createTRPCContext = async (opts: { headers: Headers }) => {
   // Fetch stuff that depends on the request
 
-  return createInnerTRPCContext({
-    headers: opts.req.headers,
-  });
+  return {
+    db,
+    auth: auth(),
+    ...opts,
+  };
 };
 
 /**
@@ -105,16 +85,65 @@ export const createTRPCRouter = t.router;
 export const publicProcedure = t.procedure;
 
 const enforcedUserIsAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.user?.id) {
+  if (!ctx.auth.userId) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
   return next({
     ctx: {
       // infers the `session` as non-nullable
-      user: { ...ctx.user, user: ctx.user.id },
+      user: { ...ctx.auth, user: ctx.auth.userId },
     },
   });
 });
 
 export const protectedProcedure = t.procedure.use(enforcedUserIsAuthed);
+
+const enforcedUserIsTeamCoach = t.middleware(async ({ ctx, next, input }) => {
+  console.log("deeznuts:", ctx.auth.userId);
+
+  if (!ctx.auth.userId) {
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "user not found" });
+  }
+
+  const user = await ctx.db.query.users.findFirst({
+    where: eq(users.userId, ctx.auth.userId),
+  });
+
+  if (!user) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "user not found, need to onboard",
+    });
+  }
+
+  const typedInput = input as { teamId: number };
+
+  const teamId = typedInput.teamId;
+
+  if (!teamId) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "teamId not provided",
+    });
+  }
+
+  const coach = await ctx.db.query.users.findFirst({
+    where: and(eq(users.userId, ctx.auth.userId), eq(users.teamId, teamId)),
+  });
+
+  if (!coach) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "user is not a coach of this team",
+    });
+  }
+
+  return next({
+    ctx: {
+      // infers the `session` as non-nullable
+      user: { ...ctx.auth, user: ctx.auth.userId },
+    },
+  });
+});
+export const coachProcedure = t.procedure.use(enforcedUserIsTeamCoach);

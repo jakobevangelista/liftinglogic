@@ -1,14 +1,62 @@
+// import {
+//   createTRPCProxyClient,
+//   loggerLink,
+//   unstable_httpBatchStreamLink,
+// } from "@trpc/client";
+// import { cookies } from "next/headers";
+
+// import { type AppRouter } from "@/server/api/root";
+// import { getUrl, transformer } from "./shared";
+
+// export const api = createTRPCProxyClient<AppRouter>({
+//   transformer,
+//   links: [
+//     loggerLink({
+//       enabled: (op) =>
+//         process.env.NODE_ENV === "development" ||
+//         (op.direction === "down" && op.result instanceof Error),
+//     }),
+//     unstable_httpBatchStreamLink({
+//       url: getUrl(),
+//       headers() {
+//         return {
+//           cookie: cookies().toString(),
+//           "x-trpc-source": "rsc",
+//         };
+//       },
+//     }),
+//   ],
+// });
+
 import {
   createTRPCProxyClient,
   loggerLink,
-  unstable_httpBatchStreamLink,
+  TRPCClientError,
 } from "@trpc/client";
+import { callProcedure } from "@trpc/server";
+import { observable } from "@trpc/server/observable";
+import { type TRPCErrorResponse } from "@trpc/server/rpc";
 import { cookies } from "next/headers";
+import { cache } from "react";
 
-import { type AppRouter } from "@/server/api/root";
-import { getUrl, transformer } from "./shared";
+import { appRouter } from "@/server/api/root";
+import { createTRPCContext } from "@/server/api/trpc";
+import { transformer } from "./shared";
 
-export const api = createTRPCProxyClient<AppRouter>({
+/**
+ * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when
+ * handling a tRPC call from a React Server Component.
+ */
+const createContext = cache(() => {
+  return createTRPCContext({
+    headers: new Headers({
+      cookie: cookies().toString(),
+      "x-trpc-source": "rsc",
+    }),
+  });
+});
+
+export const api = createTRPCProxyClient<typeof appRouter>({
   transformer,
   links: [
     loggerLink({
@@ -16,14 +64,31 @@ export const api = createTRPCProxyClient<AppRouter>({
         process.env.NODE_ENV === "development" ||
         (op.direction === "down" && op.result instanceof Error),
     }),
-    unstable_httpBatchStreamLink({
-      url: getUrl(),
-      headers() {
-        return {
-          cookie: cookies().toString(),
-          "x-trpc-source": "rsc",
-        };
-      },
-    }),
+    /**
+     * Custom RSC link that invokes procedures directly in the server component Don't be too afraid
+     * about the complexity here, it's just wrapping `callProcedure` with an observable to make it a
+     * valid ending link for tRPC.
+     */
+    () =>
+      ({ op }) =>
+        observable((observer) => {
+          createContext()
+            .then((ctx) => {
+              return callProcedure({
+                procedures: appRouter._def.procedures,
+                path: op.path,
+                rawInput: op.input,
+                ctx,
+                type: op.type,
+              });
+            })
+            .then((data) => {
+              observer.next({ result: { data } });
+              observer.complete();
+            })
+            .catch((cause: TRPCErrorResponse) => {
+              observer.error(TRPCClientError.from(cause));
+            });
+        }),
   ],
 });

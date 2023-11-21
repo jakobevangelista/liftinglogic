@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 // import { Inter } from "next/font/google";
-import "@/styles/globals.css";
-import { ClerkProvider } from "@clerk/nextjs";
-import { TRPCReactProvider } from "@/trpc/react";
-import { cookies } from "next/headers";
-import { GeistMono } from "geist/font/mono";
-import { GeistSans } from "geist/font/sans";
 import { ThemeProvider } from "@/components/theme-provider";
+import "@/styles/globals.css";
+import { TRPCReactProvider } from "@/trpc/react";
+import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
+import { GeistMono } from "geist/font/mono";
+import { cookies } from "next/headers";
+import { Suspense } from "react";
 // const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -26,11 +26,11 @@ export default function RootLayout({
         baseTheme: dark,
       }}
     >
-      <html lang="en" className="scroll-smooth">
-        <body className={`${GeistMono.variable}`}>
+      <html lang="en" className="h-full scroll-smooth">
+        <body className={`${GeistMono.variable} h-full`}>
           <TRPCReactProvider cookies={cookies().toString()}>
             <ThemeProvider attribute="class" defaultTheme="dark">
-              {children}
+              <Suspense>{children}</Suspense>
             </ThemeProvider>
           </TRPCReactProvider>
         </body>

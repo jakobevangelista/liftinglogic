@@ -4,8 +4,10 @@
 import { sql, relations } from "drizzle-orm";
 import {
   bigint,
+  boolean,
   index,
   mysqlTableCreator,
+  primaryKey,
   timestamp,
   uniqueIndex,
   varchar,
@@ -20,12 +22,6 @@ import { customAlphabet } from "nanoid";
  */
 export const mysqlTable = mysqlTableCreator((name) => `liftinglogic_${name}`);
 
-export const coaches = mysqlTable("coaches", {
-  id: bigint("id", { mode: "number" }).autoincrement().primaryKey(),
-  userId: bigint("user_id", { mode: "number" }),
-  teamId: bigint("team_id", { mode: "number" }),
-});
-
 export const users = mysqlTable(
   "users",
   {
@@ -39,9 +35,15 @@ export const users = mysqlTable(
         );
         return nanoid();
       }),
-    name: varchar("name", { length: 256 }),
-    sheetUrl: varchar("sheet_url", { length: 256 }),
+    name: varchar("name", { length: 256 }).notNull(),
     userId: varchar("user_id", { length: 256 }),
+
+    isCoach: boolean("is_coach").notNull().default(false),
+
+    teamId: bigint("team_id", { mode: "number" }).notNull(),
+
+    sheetUrl: varchar("sheet_url", { length: 256 }),
+
     createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
@@ -50,6 +52,7 @@ export const users = mysqlTable(
   (table) => ({
     nameIndex: index("name_idx").on(table.name),
     publicIdIndex: uniqueIndex("public_id_idx").on(table.publicId),
+    userIdIndex: uniqueIndex("user_id_idx").on(table.userId),
   }),
 );
 
@@ -83,14 +86,3 @@ export const teams = mysqlTable(
     headCoachIndex: uniqueIndex("head_coach_idx").on(table.headCoach),
   }),
 );
-
-export const teamRelations = relations(teams, ({ many }) => ({
-  coaches: many(coaches),
-}));
-
-export const coachRelations = relations(coaches, ({ one }) => ({
-  team: one(teams, {
-    fields: [coaches.teamId],
-    references: [teams.id],
-  }),
-}));
