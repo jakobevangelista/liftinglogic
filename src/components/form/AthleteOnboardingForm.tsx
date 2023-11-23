@@ -4,20 +4,18 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { api } from "@/trpc/react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { ActionTooltip } from "../action-tooltip";
-import { Checkbox } from "../ui/checkbox";
-import { api } from "@/trpc/react";
-import { redirect, useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(2, {

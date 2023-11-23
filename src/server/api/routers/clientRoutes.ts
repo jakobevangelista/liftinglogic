@@ -4,7 +4,6 @@ import { authedProcedure, createTRPCRouter } from "@/server/api/trpc";
 import { teams, users } from "@/server/db/schema";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
-import { redirect } from "next/dist/server/api-utils";
 
 export const clientRouter = createTRPCRouter({
   createCoach: authedProcedure

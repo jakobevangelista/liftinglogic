@@ -1,10 +1,8 @@
-import type { JSX, SVGProps } from "react";
-
 const navigation = [
   {
     name: "Email",
     href: "mailto:jakobevangelista@gmail.com",
-    icon: (props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) => (
+    icon: () => (
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -14,8 +12,9 @@ const navigation = [
         stroke="currentColor"
         strokeWidth="2"
         strokeLinecap="round"
+        aria-hidden="true"
         strokeLinejoin="round"
-        className="lucide lucide-mail"
+        className={"lucide lucide-mail h-6 w-6"}
       >
         <rect width="20" height="16" x="2" y="4" rx="2" />
         <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
@@ -50,7 +49,7 @@ export default function Footer() {
               className="text-gray-400 hover:text-gray-500"
             >
               <span className="sr-only">{item.name}</span>
-              <item.icon className="h-6 w-6" aria-hidden="true" />
+              <item.icon />
             </a>
           ))}
         </div>

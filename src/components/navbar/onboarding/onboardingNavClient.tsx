@@ -1,21 +1,14 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { cn } from "@/lib/utils";
+import { UserButton } from "@clerk/nextjs";
 import { Dialog, Transition } from "@headlessui/react";
 import {
-  CalendarIcon,
-  ChartPieIcon,
-  DocumentDuplicateIcon,
-  FolderIcon,
-  HomeIcon,
-  UsersIcon,
-  XMarkIcon,
   Bars3Icon,
+  DocumentDuplicateIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
-import Image from "next/image";
-import { cn } from "@/lib/utils";
-import { UserButton, useUser } from "@clerk/nextjs";
-import { redirect } from "next/navigation";
+import { Fragment, useState } from "react";
 const navigation = [
   { name: "Register", href: "", icon: DocumentDuplicateIcon, current: true },
 ];
@@ -128,7 +121,7 @@ const OnboardingNavClient = () => {
           <Bars3Icon className="h-6 w-6" aria-hidden="true" />
         </button>
         <div className="flex-1 text-sm font-semibold leading-6 text-white">
-          Register  
+          Register
         </div>
         <a href="#">
           <span className="sr-only">Your profile</span>

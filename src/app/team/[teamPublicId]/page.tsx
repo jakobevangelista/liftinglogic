@@ -6,7 +6,7 @@ import { db } from "@/server/db";
 import { teams, users } from "@/server/db/schema";
 import { UserButton } from "@clerk/nextjs";
 import { DocumentDuplicateIcon } from "@heroicons/react/24/outline";
-import { eq, is } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 
 interface DashboardProps {
@@ -18,7 +18,7 @@ interface DashboardProps {
 const navigation = [
   {
     name: "Dashboard",
-    href: "/team/",
+    href: "",
     icon: DocumentDuplicateIcon,
     current: true,
   },

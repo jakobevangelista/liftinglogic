@@ -1,4 +1,4 @@
-import { SignIn, SignUp, currentUser } from "@clerk/nextjs";
+import { SignUp, currentUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
