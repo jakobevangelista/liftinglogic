@@ -1,10 +1,11 @@
 import { SignIn, currentUser } from "@clerk/nextjs";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export default async function Page() {
   const user = await currentUser();
   if (user !== null) {
-    redirect("/dashboard");
+    redirect("/onboarding");
   }
   return (
     <>
@@ -21,16 +22,38 @@ export default async function Page() {
             }}
           />
         </div>
-        <div className="mx-auto flex max-w-3xl flex-col place-content-center items-center justify-center py-32 sm:py-48 lg:py-56">
+
+        <div className=" flex flex-col place-content-center items-center justify-center space-x-4 py-32 sm:py-48 lg:py-56">
+          {/* <div className="mb-2 mt-6 rounded-md border border-secondary bg-secondary/80 p-4 text-center">
+            <p className="text-md font-semibold text-primary">Coaches</p>
+          </div> */}
           <SignIn
-            afterSignInUrl={"/dashboard"}
+            afterSignInUrl={"/onboarding"}
             appearance={{
               elements: {
                 footer: "hidden",
               },
             }}
           />
+          <div className="flex pt-2">
+            <span>
+              By signing in, you agree to our{" "}
+              <Link
+                className="text-blue-500 underline"
+                href="/terms-of-service"
+              >
+                Terms of Service
+              </Link>
+            </span>
+          </div>
+
+          {/* <div className="mt-8 rounded-md border border-secondary bg-secondary/80 p-4 text-center">
+            <p className="text-md font-semibold text-primary">
+              If you are an athlete, ask for an invite linked from your coach.
+            </p>
+          </div> */}
         </div>
+
         <div
           className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
           aria-hidden="true"

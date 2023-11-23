@@ -1,13 +1,12 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { sql, relations } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import {
   bigint,
   boolean,
   index,
   mysqlTableCreator,
-  primaryKey,
   timestamp,
   uniqueIndex,
   varchar,
@@ -36,11 +35,14 @@ export const users = mysqlTable(
         return nanoid();
       }),
     name: varchar("name", { length: 256 }).notNull(),
-    userId: varchar("user_id", { length: 256 }),
+
+    emailAddress: varchar("email_address", { length: 256 }).notNull(),
+
+    clerkId: varchar("clerk_id", { length: 256 }),
 
     isCoach: boolean("is_coach").notNull().default(false),
 
-    teamId: bigint("team_id", { mode: "number" }).notNull(),
+    teamId: bigint("team_id", { mode: "number" }),
 
     sheetUrl: varchar("sheet_url", { length: 256 }),
 
@@ -51,8 +53,10 @@ export const users = mysqlTable(
   },
   (table) => ({
     nameIndex: index("name_idx").on(table.name),
+    emailAddressIndex: index("email_address_idx").on(table.emailAddress),
     publicIdIndex: uniqueIndex("public_id_idx").on(table.publicId),
-    userIdIndex: uniqueIndex("user_id_idx").on(table.userId),
+    clerkIdIndex: uniqueIndex("clerk_id_idx").on(table.clerkId),
+    teamIdIndex: index("team_id_idx").on(table.teamId),
   }),
 );
 
@@ -80,9 +84,11 @@ export const teams = mysqlTable(
       .notNull(),
     updatedAt: timestamp("updatedAt").onUpdateNow(),
   },
-  (table) => ({
-    name: uniqueIndex("name_idx").on(table.name),
-    publicIdIndex: uniqueIndex("public_id_idx").on(table.publicId),
-    headCoachIndex: uniqueIndex("head_coach_idx").on(table.headCoach),
-  }),
+  (table) => {
+    return {
+      name: uniqueIndex("name_idx").on(table.name),
+      publicIdIndex: uniqueIndex("public_id_idx").on(table.publicId),
+      headCoachIndex: uniqueIndex("head_coach_idx").on(table.headCoach),
+    };
+  },
 );

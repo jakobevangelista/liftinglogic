@@ -1,24 +1,26 @@
-import { checkIfUserSignedIn } from "@/lib/checkAuth";
+import { CoachOnboardingForm } from "@/components/form/CoachOnboardingForm";
 import { Separator } from "@/components/ui/separator";
-import { ProfileForm } from "@/components/form/OnboardingForm";
+import { checkOnboardingAuth } from "@/lib/checkAuth";
 
 const Onboarding = async () => {
-  const user = await checkIfUserSignedIn();
-
+  const user = await checkOnboardingAuth();
   return (
     <>
       <div className="mx-auto max-w-md space-y-6">
         <div>
-          <h3 className="text-lg font-medium">Create Profile</h3>
+          <h3 className="text-lg font-medium">Welcome Coach!</h3>
           <p className="text-sm text-muted-foreground">
             Create your profile to get started.
           </p>
+          <span className="font-black">
+            IF YOU ARE AN ATHLETE, DO NOT FILL OUT THIS FORM ASK YOUR COACH TO
+            SEND YOU AN INVITE LINK
+          </span>
         </div>
         <Separator />
-        <ProfileForm
+        <CoachOnboardingForm
           firstName={`${user.firstName}`}
           lastName={`${user.lastName}`}
-          userId={user.id}
           email={user.emailAddresses[0]?.emailAddress}
         />
       </div>

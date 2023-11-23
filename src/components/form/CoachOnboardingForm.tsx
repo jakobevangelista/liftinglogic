@@ -11,44 +11,49 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { api } from "@/trpc/react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { ActionTooltip } from "../action-tooltip";
-import { Checkbox } from "../ui/checkbox";
-const formSchema = z
-  .object({
-    name: z.string().min(2, {
-      message: "Name must be at least 2 characters.",
-    }),
-    email: z.string().email({ message: "Please enter a valid email." }),
-    isCoach: z.boolean().optional(),
-    teamName: z.string().optional(),
-  })
-  .superRefine((data, ctx) => {
-    if (data.isCoach && !data.teamName) {
-      return ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Please enter a team name",
-        path: ["teamName"],
-      });
-    } else if (!data.isCoach) {
-      data.teamName = "";
-    }
-  });
+
+const formSchema = z.object({
+  name: z.string().min(2, {
+    message: "Name must be at least 2 characters.",
+  }),
+  email: z.string().email({ message: "Please enter a valid email." }),
+
+  teamName: z.string().min(2, {
+    message: "Team Name must be at least 2 characters.",
+  }),
+});
 
 interface ProfileFormProps {
   firstName: string | null;
   lastName: string | null;
   email?: string;
-  userId: string;
 }
-export function ProfileForm({
+export function CoachOnboardingForm({
   firstName,
   lastName,
   email,
-  userId,
 }: ProfileFormProps) {
+  const router = useRouter();
+  const createCoach = api.client.createCoach.useMutation({
+    onSuccess: (data) => {
+      const redirectUrl = `/team/${data.publicTeamId}`;
+      console.log(data);
+      router.push(redirectUrl);
+    },
+    onError: (error) => {
+      alert(
+        `Error: failed to create coach, please try again. ${error.data?.code}`,
+      );
+      console.log(error);
+    },
+  });
+
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -56,8 +61,7 @@ export function ProfileForm({
       name: `${firstName === "null" ? "" : firstName} ${
         lastName === "null" ? "" : lastName
       }`,
-      email: `${email}`,
-      isCoach: false,
+      email: `${email ?? ""}`,
       teamName: "",
     },
   });
@@ -66,7 +70,14 @@ export function ProfileForm({
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
+
     console.log(values);
+
+    createCoach.mutate({
+      name: values.name,
+      emailAddress: values.email,
+      teamName: values.teamName,
+    });
   }
   return (
     <Form {...form}>
@@ -78,7 +89,7 @@ export function ProfileForm({
             <FormItem>
               <FormLabel>Full Name</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" {...field} />
+                <Input placeholder="Full Name" {...field} />
               </FormControl>
               <FormDescription>
                 This is your public display name.
@@ -109,41 +120,21 @@ export function ProfileForm({
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
-          name="isCoach"
+          name="teamName"
           render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+            <FormItem>
+              <FormLabel>Team Name</FormLabel>
               <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
+                <Input placeholder="Team Name" {...field} />
               </FormControl>
-              <div className="space-y-1 leading-none">
-                <FormLabel>Are you a coach?</FormLabel>
-                <FormDescription>
-                  If you are a coach, you will fill out a team form after this
-                </FormDescription>
-              </div>
+              <FormMessage />
             </FormItem>
           )}
         />
-        {form.getValues("isCoach") ? (
-          <FormField
-            control={form.control}
-            name="teamName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Team Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Team Name" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        ) : null}
+
         <Button type="submit">Submit</Button>
       </form>
     </Form>

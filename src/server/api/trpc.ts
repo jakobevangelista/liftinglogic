@@ -97,7 +97,7 @@ const enforcedUserIsAuthed = t.middleware(({ ctx, next }) => {
   });
 });
 
-export const protectedProcedure = t.procedure.use(enforcedUserIsAuthed);
+export const authedProcedure = t.procedure.use(enforcedUserIsAuthed);
 
 const enforcedUserIsTeamCoach = t.middleware(async ({ ctx, next, input }) => {
   console.log("deeznuts:", ctx.auth.userId);
@@ -107,7 +107,7 @@ const enforcedUserIsTeamCoach = t.middleware(async ({ ctx, next, input }) => {
   }
 
   const user = await ctx.db.query.users.findFirst({
-    where: eq(users.userId, ctx.auth.userId),
+    where: eq(users.clerkId, ctx.auth.userId),
   });
 
   if (!user) {
@@ -129,7 +129,7 @@ const enforcedUserIsTeamCoach = t.middleware(async ({ ctx, next, input }) => {
   }
 
   const coach = await ctx.db.query.users.findFirst({
-    where: and(eq(users.userId, ctx.auth.userId), eq(users.teamId, teamId)),
+    where: and(eq(users.clerkId, ctx.auth.userId), eq(users.teamId, teamId)),
   });
 
   if (!coach) {

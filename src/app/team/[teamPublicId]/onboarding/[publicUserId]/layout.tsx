@@ -1,19 +1,32 @@
 import OnboardingNavClient from "@/components/navbar/onboarding/onboardingNavClient";
-import { checkSignedin } from "@/lib/checkAuth";
 import { cn } from "@/lib/utils";
-import { UserButton } from "@clerk/nextjs";
+import { RedirectToSignUp, UserButton, currentUser } from "@clerk/nextjs";
 import { DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 
 const navigation = [
   { name: "Register", href: "#", icon: DocumentDuplicateIcon, current: true },
 ];
 
+interface OnboardinLayoutProps {
+  children: React.ReactNode;
+  params: {
+    teamPublicId: string;
+    publicUserId: string;
+  };
+}
+
 export default async function OnboardingLayout({
   children,
-}: {
-  children: React.ReactNode;
-}) {
-  const user = await checkSignedin();
+  params,
+}: OnboardinLayoutProps) {
+  const user = await currentUser();
+  if (!user) {
+    return (
+      <RedirectToSignUp
+        afterSignInUrl={`/team/${params.teamPublicId}/onboarding/${params.publicUserId}`}
+      />
+    );
+  }
   return (
     <>
       <div>

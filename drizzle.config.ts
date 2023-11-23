@@ -7,6 +7,7 @@ export default {
   driver: "mysql2",
   dbCredentials: {
     connectionString: env.DATABASE_URL,
+    // uri: env.DATABASE_URL,
   },
   tablesFilter: ["liftinglogic_*"],
 } satisfies Config;

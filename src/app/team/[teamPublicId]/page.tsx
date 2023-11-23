@@ -1,19 +1,60 @@
 import OnboardingNavClient from "@/components/navbar/onboarding/onboardingNavClient";
+import { Button } from "@/components/ui/button";
 import { checkSignedin } from "@/lib/checkAuth";
 import { cn } from "@/lib/utils";
+import { db } from "@/server/db";
+import { teams, users } from "@/server/db/schema";
 import { UserButton } from "@clerk/nextjs";
 import { DocumentDuplicateIcon } from "@heroicons/react/24/outline";
+import { eq, is } from "drizzle-orm";
+import { redirect } from "next/navigation";
+
+interface DashboardProps {
+  params: {
+    teamPublicId: string;
+  };
+}
 
 const navigation = [
-  { name: "Register", href: "#", icon: DocumentDuplicateIcon, current: true },
+  {
+    name: "Dashboard",
+    href: "/team/",
+    icon: DocumentDuplicateIcon,
+    current: true,
+  },
 ];
 
-export default async function OnboardingLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+const Dashboard = async ({ params }: DashboardProps) => {
   const user = await checkSignedin();
+  const isPartOfTeam = await db.query.users.findFirst({
+    where: eq(users.clerkId, user.id),
+  });
+  const team = await db.query.teams.findFirst({
+    where: eq(teams.publicId, params.teamPublicId),
+  });
+  if (
+    (isPartOfTeam?.teamId !== team?.id && isPartOfTeam !== undefined) ||
+    !isPartOfTeam
+  ) {
+    redirect("/onboarding");
+  }
+
+  if (isPartOfTeam?.teamId === team?.id && isPartOfTeam?.clerkId === null) {
+    redirect(
+      `/team/${params.teamPublicId}/onboarding/${isPartOfTeam?.publicId}`,
+    );
+  }
+  console.log(isPartOfTeam);
+
+  const handleButtonClick = async () => {
+    "use server";
+    await db.insert(users).values({
+      emailAddress: "jakobevanglista@gmail.com",
+      name: "Jakob Evanglista",
+      teamId: team?.id,
+    });
+  };
+
   return (
     <>
       <div>
@@ -69,9 +110,18 @@ export default async function OnboardingLayout({
         </div>
 
         <main className="py-10 lg:pl-72">
-          <div className=" px-4 sm:px-6 lg:px-8">{children}</div>
+          <div className=" px-4 sm:px-6 lg:px-8">
+            <div>Dashboard {team?.name}</div>
+            <div>
+              <form>
+                <Button formAction={handleButtonClick}>deeznuts</Button>
+              </form>
+            </div>
+          </div>
         </main>
       </div>
     </>
   );
-}
+};
+
+export default Dashboard;

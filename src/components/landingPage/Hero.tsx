@@ -59,10 +59,10 @@ const Hero = async () => {
                 </Button>
               ) : (
                 <Link
-                  href="/dashboard"
+                  href="/onboarding"
                   className="flex cursor-pointer flex-row items-center gap-4 text-sm font-semibold leading-6"
                 >
-                  Dashboard
+                  Go To Team
                   <UserButton />
                 </Link>
               )}
