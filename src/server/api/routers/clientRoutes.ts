@@ -1,10 +1,6 @@
 import { z } from "zod";
 
-import {
-  authedProcedure,
-  coachProcedure,
-  createTRPCRouter,
-} from "@/server/api/trpc";
+import { authedProcedure, createTRPCRouter } from "@/server/api/trpc";
 import { channels, conversations, teams, users } from "@/server/db/schema";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";

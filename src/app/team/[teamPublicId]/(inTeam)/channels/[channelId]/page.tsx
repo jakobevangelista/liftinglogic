@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { checkSignedin } from "@/lib/checkAuth";
 import { db } from "@/server/db";
 import { teams, users } from "@/server/db/schema";
-import { DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 
@@ -12,15 +11,6 @@ interface DashboardProps {
     channelId: string;
   };
 }
-
-const navigation = [
-  {
-    name: "Dashboard",
-    href: "",
-    icon: DocumentDuplicateIcon,
-    current: true,
-  },
-];
 
 const Dashboard = async ({ params }: DashboardProps) => {
   const user = await checkSignedin();

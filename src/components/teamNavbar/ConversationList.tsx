@@ -1,6 +1,5 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { Hash } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 

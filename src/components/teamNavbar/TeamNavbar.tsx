@@ -2,14 +2,14 @@ import { cn } from "@/lib/utils";
 import { db } from "@/server/db";
 import { conversations, teams, users } from "@/server/db/schema";
 import { UserButton } from "@clerk/nextjs";
-import { and, eq, ne, not, or } from "drizzle-orm";
-import { Hash, HomeIcon } from "lucide-react";
-import { redirect } from "next/navigation";
-import TeamNavBarClient from "./TeamNavBarClient";
-import InviteModal from "../modals/invite-modal";
+import { eq, ne, or } from "drizzle-orm";
+import { HomeIcon } from "lucide-react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import InviteModal from "../modals/invite-modal";
 import ChannelList from "./ChannelList";
 import ConversationList from "./ConversationList";
+import TeamNavBarClient from "./TeamNavBarClient";
 
 interface DashboardProps {
   user: { id: number; name: string; isCoach: boolean };
@@ -39,29 +39,10 @@ const TeamNavbar = async ({ user, params }: DashboardProps) => {
       ),
     )
     .where(ne(users.id, user.id));
-  console.log("userconversations: ", userConversations);
-  const formattedConversations = userConversations.map((conversation) => {
-    return {
-      id: conversation.conversations.id,
-      href: `/team/${params.teamPublicId}/channels/${conversation.conversations.publicId}`,
-      initial: conversation.users.name[0],
-      name: conversation.users.name,
-      current: false,
-    };
-  });
 
   if (!team) {
     return redirect("/team");
   }
-
-  const navigation = team.channels.map((item) => {
-    return {
-      name: item.name,
-      href: `/team/${params.teamPublicId}/channels/${item.publicId}`,
-      icon: Hash,
-      current: false,
-    };
-  });
 
   return (
     <>

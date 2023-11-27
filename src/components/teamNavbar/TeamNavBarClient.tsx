@@ -1,26 +1,15 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { UserButton } from "@clerk/nextjs";
+import { Dialog, Transition } from "@headlessui/react";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { Fragment, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import {
-  Bars3Icon,
-  CalendarIcon,
-  ChartPieIcon,
-  DocumentDuplicateIcon,
-  FolderIcon,
-  HomeIcon,
-  UsersIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
-import { UserButton } from "@clerk/nextjs";
 
 import { Hash } from "lucide-react";
 import { useParams, usePathname } from "next/navigation";
 import InviteModal from "../modals/invite-modal";
-import ChannelList from "./ChannelList";
-import ConversationList from "./ConversationList";
 
 interface TeamNavBarClientProps {
   channels: {
