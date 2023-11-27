@@ -8,6 +8,7 @@ import {
   DocumentDuplicateIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import Link from "next/link";
 import { Fragment, useState } from "react";
 const navigation = [
   { name: "Register", href: "", icon: DocumentDuplicateIcon, current: true },
@@ -83,7 +84,7 @@ const OnboardingNavClient = () => {
                         <ul role="list" className="-mx-2 space-y-1">
                           {navigation.map((item) => (
                             <li key={item.name}>
-                              <a
+                              <Link
                                 href={item.href}
                                 className={cn(
                                   item.current
@@ -97,7 +98,7 @@ const OnboardingNavClient = () => {
                                   aria-hidden="true"
                                 />
                                 {item.name}
-                              </a>
+                              </Link>
                             </li>
                           ))}
                         </ul>
@@ -123,13 +124,13 @@ const OnboardingNavClient = () => {
         <div className="flex-1 text-sm font-semibold leading-6 text-white">
           Register
         </div>
-        <a href="#">
+        <Link href="#">
           <span className="sr-only">Your profile</span>
           <div className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-white ">
             <UserButton afterSignOutUrl="/" />
             <span className="sr-only">Your profile</span>
           </div>
-        </a>
+        </Link>
       </div>
     </>
   );

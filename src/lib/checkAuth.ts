@@ -50,3 +50,16 @@ export const checkTeamOnboardingAuth = async (
 
   return { isRegistered, team, user };
 };
+
+export const checkCoach = async () => {
+  const user = await checkSignedin();
+  const isRegistered = await db.query.users.findFirst({
+    where: eq(users.clerkId, user.id),
+  });
+
+  if (isRegistered?.isCoach !== true) {
+    redirect("/team");
+  }
+
+  return user;
+};

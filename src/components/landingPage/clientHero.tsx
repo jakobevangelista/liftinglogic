@@ -1,6 +1,7 @@
 "use client";
 import { Dialog } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 import { useState } from "react";
 
 const navigation = [{ name: "Pricing", href: "#pricing", disabled: false }];
@@ -28,7 +29,7 @@ const ClientHeroSection = () => {
         <Dialog.Panel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-[#0a0a0a]/90 px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
           <div className="flex items-center justify-between">
             <div className="flex lg:flex-1">
-              <a href="#" className="-m-1.5 p-1.5">
+              <Link href="#" className="-m-1.5 p-1.5">
                 <span className="sr-only">Your Company</span>
                 <h1 className="relative flex flex-row items-baseline text-2xl font-bold">
                   <span className="sr-only">liftinglogic</span>
@@ -39,7 +40,7 @@ const ClientHeroSection = () => {
                     [BETA]
                   </sup>
                 </h1>
-              </a>
+              </Link>
             </div>
             <button
               type="button"
@@ -54,14 +55,14 @@ const ClientHeroSection = () => {
             <div className="-my-6 divide-y divide-gray-500/10">
               <div className="space-y-2 py-6">
                 {navigation.map((item) => (
-                  <a
+                  <Link
                     key={item.name}
                     href={item.href}
                     className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7  hover:bg-gray-800"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {item.name}
-                  </a>
+                  </Link>
                 ))}
               </div>
               <div className="py-6">
@@ -70,7 +71,7 @@ const ClientHeroSection = () => {
                   className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
                   Log in
-                </a> */}
+                </Link> */}
               </div>
             </div>
           </div>

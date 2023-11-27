@@ -57,6 +57,7 @@ const TeamOnboarding = async ({ params }: TeamOnboardingProps) => {
           email={user.emailAddresses[0]?.emailAddress}
           name={existingUser?.name}
           clerkId={user.id}
+          team={team}
         />
       </div>
     </>

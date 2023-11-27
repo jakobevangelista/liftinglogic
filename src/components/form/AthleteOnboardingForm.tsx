@@ -30,6 +30,14 @@ interface ProfileFormProps {
   email?: string;
   name?: string;
   clerkId: string;
+  team: {
+    name: string;
+    id: number;
+    publicId: string;
+    createdAt: Date;
+    updatedAt: Date | null;
+    headCoach: number;
+  };
 }
 export function AthleteOnboardingForm({
   teamPublicId,
@@ -37,6 +45,7 @@ export function AthleteOnboardingForm({
   email,
   name,
   clerkId,
+  team,
 }: ProfileFormProps) {
   const router = useRouter();
   const createAthlete = api.client.createAthlete.useMutation();
@@ -63,6 +72,7 @@ export function AthleteOnboardingForm({
         emailAddress: values.email,
         clerkId: clerkId,
         publicUserId: publicUserId,
+        teamId: team.id,
       },
       {
         onSuccess: () => {

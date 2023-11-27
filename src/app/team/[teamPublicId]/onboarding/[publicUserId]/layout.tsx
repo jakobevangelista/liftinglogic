@@ -2,6 +2,7 @@ import OnboardingNavClient from "@/components/navbar/onboarding/onboardingNavCli
 import { cn } from "@/lib/utils";
 import { RedirectToSignUp, UserButton, currentUser } from "@clerk/nextjs";
 import { DocumentDuplicateIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 const navigation = [
   { name: "Register", href: "#", icon: DocumentDuplicateIcon, current: true },
@@ -46,7 +47,7 @@ export default async function OnboardingLayout({
                   <ul role="list" className="-mx-2 space-y-1">
                     {navigation.map((item) => (
                       <li key={item.name}>
-                        <a
+                        <Link
                           href={item.href}
                           className={cn(
                             item.current
@@ -60,7 +61,7 @@ export default async function OnboardingLayout({
                             aria-hidden="true"
                           />
                           {item.name}
-                        </a>
+                        </Link>
                       </li>
                     ))}
                   </ul>

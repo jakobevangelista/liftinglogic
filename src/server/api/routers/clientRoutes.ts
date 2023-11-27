@@ -1,7 +1,11 @@
 import { z } from "zod";
 
-import { authedProcedure, createTRPCRouter } from "@/server/api/trpc";
-import { teams, users } from "@/server/db/schema";
+import {
+  authedProcedure,
+  coachProcedure,
+  createTRPCRouter,
+} from "@/server/api/trpc";
+import { channels, conversations, teams, users } from "@/server/db/schema";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 
@@ -46,6 +50,11 @@ export const clientRouter = createTRPCRouter({
         });
       }
 
+      await ctx.db.insert(channels).values({
+        name: "general",
+        teamId: newTeam.id,
+      });
+
       await ctx.db
         .update(users)
         .set({
@@ -67,6 +76,7 @@ export const clientRouter = createTRPCRouter({
         emailAddress: z.string(),
         publicUserId: z.string(),
         clerkId: z.string(),
+        teamId: z.number(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -78,5 +88,27 @@ export const clientRouter = createTRPCRouter({
           clerkId: input.clerkId,
         })
         .where(eq(users.publicId, input.publicUserId));
+
+      const headcoach = await ctx.db.query.teams.findFirst({
+        where: eq(teams.id, input.teamId),
+        columns: {
+          headCoach: true,
+        },
+      });
+      const newUser = await ctx.db.query.users.findFirst({
+        where: eq(users.publicId, input.publicUserId),
+      });
+
+      if (!headcoach || !newUser) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "user or team not found after insert",
+        });
+      }
+
+      await ctx.db.insert(conversations).values({
+        userId1: headcoach.headCoach,
+        userId2: newUser.id,
+      });
     }),
 });

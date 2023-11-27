@@ -17,7 +17,7 @@ const Hero = async () => {
             aria-label="Global"
           >
             <div className="flex lg:flex-1">
-              <a href="#" className="-m-1.5 p-1.5">
+              <Link href="#" className="-m-1.5 p-1.5">
                 <span className="sr-only">Your Company</span>
                 <h1 className="relative flex flex-row items-baseline text-2xl font-bold">
                   <span className="sr-only">liftinglogic</span>
@@ -28,7 +28,7 @@ const Hero = async () => {
                     [BETA]
                   </sup>
                 </h1>
-              </a>
+              </Link>
             </div>
             <div className="flex lg:hidden">
               <ClientHeroSection />
@@ -63,7 +63,7 @@ const Hero = async () => {
                   className="flex cursor-pointer flex-row items-center gap-4 text-sm font-semibold leading-6"
                 >
                   Go To Team
-                  <UserButton />
+                  <UserButton afterSignOutUrl="/" />
                 </Link>
               )}
             </div>
