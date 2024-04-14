@@ -1,12 +1,13 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { relations, sql } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import {
   bigint,
   boolean,
   index,
   mysqlTableCreator,
+  serial,
   text,
   timestamp,
   uniqueIndex,
@@ -25,7 +26,7 @@ export const mysqlTable = mysqlTableCreator((name) => `liftinglogic_${name}`);
 export const users = mysqlTable(
   "users",
   {
-    id: bigint("id", { mode: "number" }).autoincrement().primaryKey(),
+    id: serial("id").primaryKey(),
     publicId: varchar("public_id", { length: 12 })
       .notNull()
       .$defaultFn(() => {
@@ -47,9 +48,7 @@ export const users = mysqlTable(
 
     sheetUrl: varchar("sheet_url", { length: 256 }),
 
-    createdAt: timestamp("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updatedAt").onUpdateNow(),
   },
   (table) => ({
@@ -73,7 +72,7 @@ export const userRelations = relations(users, ({ one, many }) => ({
 export const teams = mysqlTable(
   "teams",
   {
-    id: bigint("id", { mode: "number" }).autoincrement().primaryKey(),
+    id: serial("id").primaryKey(),
     publicId: varchar("public_id", { length: 12 })
       .notNull()
       .$defaultFn(() => {
@@ -89,9 +88,7 @@ export const teams = mysqlTable(
       mode: "number",
     }).notNull(),
 
-    createdAt: timestamp("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updatedAt").onUpdateNow(),
   },
   (table) => {
@@ -111,7 +108,7 @@ export const teamsRelations = relations(teams, ({ many }) => ({
 export const channels = mysqlTable(
   "channels",
   {
-    id: bigint("id", { mode: "number" }).autoincrement().primaryKey(),
+    id: serial("id").primaryKey(),
     publicId: varchar("public_id", { length: 12 })
       .notNull()
       .$defaultFn(() => {
@@ -127,9 +124,7 @@ export const channels = mysqlTable(
       mode: "number",
     }).notNull(),
 
-    createdAt: timestamp("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updatedAt").onUpdateNow(),
   },
   (table) => {
@@ -152,7 +147,7 @@ export const channelsRelations = relations(channels, ({ one, many }) => ({
 export const messages = mysqlTable(
   "messages",
   {
-    id: bigint("id", { mode: "number" }).autoincrement().primaryKey(),
+    id: serial("id").primaryKey(),
 
     content: text("content").notNull(),
 
@@ -166,11 +161,11 @@ export const messages = mysqlTable(
       mode: "number",
     }).notNull(),
 
+    name: varchar("name", { length: 256 }).notNull(),
+
     deleted: boolean("deleted").notNull().default(false),
 
-    createdAt: timestamp("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updatedAt").onUpdateNow(),
   },
   (table) => {
@@ -195,7 +190,7 @@ export const messagesRelations = relations(messages, ({ one }) => ({
 export const conversations = mysqlTable(
   "conversations",
   {
-    id: bigint("id", { mode: "number" }).autoincrement().primaryKey(),
+    id: serial("id").primaryKey(),
     publicId: varchar("public_id", { length: 12 })
       .notNull()
       .$defaultFn(() => {
@@ -208,9 +203,7 @@ export const conversations = mysqlTable(
     userId1: bigint("user_id_1", { mode: "number" }).notNull(),
     userId2: bigint("user_id_2", { mode: "number" }).notNull(),
 
-    createdAt: timestamp("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updatedAt").onUpdateNow(),
   },
   (table) => {
@@ -229,7 +222,7 @@ export const conversationsRelations = relations(conversations, ({ many }) => ({
 export const directMessages = mysqlTable(
   "direct_messages",
   {
-    id: bigint("id", { mode: "number" }).autoincrement().primaryKey(),
+    id: serial("id").primaryKey(),
 
     content: text("content").notNull(),
 
@@ -243,11 +236,11 @@ export const directMessages = mysqlTable(
       mode: "number",
     }).notNull(),
 
+    name: varchar("name", { length: 256 }).notNull(),
+
     deleted: boolean("deleted").notNull().default(false),
 
-    createdAt: timestamp("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updatedAt").onUpdateNow(),
   },
   (table) => {

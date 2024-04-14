@@ -59,7 +59,7 @@ const Hero = async () => {
                 </Button>
               ) : (
                 <Link
-                  href="/onboarding"
+                  href="/team"
                   className="flex cursor-pointer flex-row items-center gap-4 text-sm font-semibold leading-6"
                 >
                   Go To Team

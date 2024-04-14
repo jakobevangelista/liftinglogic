@@ -28,7 +28,7 @@ export default async function Page() {
             <p className="text-md font-semibold text-primary">Coaches</p>
           </div> */}
           <SignIn
-            afterSignInUrl={"/onboarding"}
+            afterSignInUrl={"/team"}
             appearance={{
               elements: {
                 footer: "hidden",

@@ -32,7 +32,7 @@ const ConversationList = ({ userConversations }: ChannelListProps) => {
 
   const formattedConversations = userConversations.map((conversation) => {
     const isActive =
-      params.conversationId === conversation.conversations.publicId;
+      params.conversationPublicId === conversation.conversations.publicId;
 
     return {
       id: conversation.conversations.id,
@@ -52,14 +52,14 @@ const ConversationList = ({ userConversations }: ChannelListProps) => {
             className={cn(
               conversation.current
                 ? "bg-gray-800 text-primary"
-                : "text-gray-400 hover:bg-gray-50 hover:text-primary",
+                : "text-gray-400 hover:bg-gray-800 hover:text-primary",
               "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6",
             )}
           >
             <span
               className={cn(
                 conversation.current
-                  ? "border-primary text-primary"
+                  ? "border-primary bg-gray-800 text-primary"
                   : "border-gray-200 text-primary group-hover:border-primary group-hover:text-primary",
                 "flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border bg-white text-[0.625rem] font-medium",
               )}

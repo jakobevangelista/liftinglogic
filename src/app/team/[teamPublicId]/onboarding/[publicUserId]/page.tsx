@@ -37,8 +37,6 @@ const TeamOnboarding = async ({ params }: TeamOnboardingProps) => {
     redirect(`/team/${params.teamPublicId}`);
   }
 
-  console.log(existingUser);
-
   return (
     <>
       <div className="mx-auto max-w-md space-y-6">

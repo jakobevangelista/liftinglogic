@@ -59,7 +59,7 @@ const TeamNavBarClient = ({
   const params = useParams();
   const pathname = usePathname();
   const navigation = channels.map((item) => {
-    const isActive = params.channelId === item.publicId;
+    const isActive = params.channelPublicId === item.publicId;
 
     return {
       name: item.name,
@@ -71,7 +71,7 @@ const TeamNavBarClient = ({
   });
   const formattedConversations = userConversations.map((conversation) => {
     const isActive =
-      params.conversationId === conversation.conversations.publicId;
+      params.conversationPublicId === conversation.conversations.publicId;
     return {
       id: conversation.conversations.id,
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -81,9 +81,7 @@ const TeamNavBarClient = ({
       current: isActive,
     };
   });
-  console.log(channels.find((item) => item.publicId === params.channelId));
-  console.log(channels);
-  console.log(params.conversationId);
+
   return (
     <>
       <Transition.Root show={sidebarOpen} as={Fragment}>
@@ -260,7 +258,7 @@ const TeamNavBarClient = ({
               {
                 userConversations.find(
                   (item) =>
-                    item.conversations.publicId === params.conversationId,
+                    item.conversations.publicId === params.conversationPublicId,
                 )?.users.name
               }
             </span>

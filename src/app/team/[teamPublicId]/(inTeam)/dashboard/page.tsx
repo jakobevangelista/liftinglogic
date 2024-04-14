@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 interface DashboardProps {
   params: {
     teamPublicId: string;
-    channelId: string;
+    channelPublicId: string;
   };
 }
 
@@ -17,6 +17,7 @@ const Dashboard = async ({ params }: DashboardProps) => {
   const isPartOfTeam = await db.query.users.findFirst({
     where: eq(users.clerkId, user.id),
   });
+
   const team = await db.query.teams.findFirst({
     where: eq(teams.publicId, params.teamPublicId),
   });
@@ -26,13 +27,15 @@ const Dashboard = async ({ params }: DashboardProps) => {
   ) {
     redirect("/onboarding");
   }
+  if (isPartOfTeam.isCoach === false) {
+    redirect(`/team/${params.teamPublicId}`);
+  }
 
   if (isPartOfTeam?.teamId === team?.id && isPartOfTeam?.clerkId === null) {
     redirect(
       `/team/${params.teamPublicId}/onboarding/${isPartOfTeam?.publicId}`,
     );
   }
-  console.log(isPartOfTeam);
 
   const handleButtonClick = async () => {
     "use server";

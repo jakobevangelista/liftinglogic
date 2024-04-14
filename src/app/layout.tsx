@@ -8,6 +8,7 @@ import { dark } from "@clerk/themes";
 import { GeistMono } from "geist/font/mono";
 import { cookies } from "next/headers";
 import { Suspense } from "react";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 // const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -34,7 +35,10 @@ export default function RootLayout({
               defaultTheme="dark"
               disableTransitionOnChange
             >
-              <Suspense fallback={<span></span>}>{children}</Suspense>
+              <Suspense fallback={<span></span>}>
+                {children}
+                <ReactQueryDevtools initialIsOpen={true} />
+              </Suspense>
             </ThemeProvider>
           </TRPCReactProvider>
         </body>

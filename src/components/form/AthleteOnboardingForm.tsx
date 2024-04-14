@@ -48,7 +48,7 @@ export function AthleteOnboardingForm({
   team,
 }: ProfileFormProps) {
   const router = useRouter();
-  const createAthlete = api.client.createAthlete.useMutation();
+  const createAthlete = api.clientRouter.createAthlete.useMutation();
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -63,8 +63,6 @@ export function AthleteOnboardingForm({
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-
-    console.log(values);
 
     createAthlete.mutate(
       {

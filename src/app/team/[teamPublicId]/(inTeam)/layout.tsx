@@ -34,15 +34,16 @@ const Dashboard = async ({ params, children }: DashboardProps) => {
       `/team/${params.teamPublicId}/onboarding/${isPartOfTeam?.publicId}`,
     );
   }
-  console.log(isPartOfTeam);
 
   return (
     <>
       <div>
         <TeamNavbar user={isPartOfTeam} params={params} />
 
-        <main className="py-10 lg:pl-72">
-          <div className=" px-4 sm:px-6 lg:px-8">{children}</div>
+        {/* <main className="h-screen flex-col justify-end py-10 lg:pl-72"> */}
+        <main className="flex h-screen p-4 lg:pl-72">
+          {/* <div className=" px-4 sm:px-6 lg:px-8">{children}</div> */}
+          {children}
         </main>
       </div>
     </>

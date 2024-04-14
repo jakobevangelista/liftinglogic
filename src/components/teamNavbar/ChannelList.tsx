@@ -18,7 +18,7 @@ const ChannelList = ({ channels }: ChannelListProps) => {
   const params = useParams();
 
   const navigation = channels.map((item) => {
-    const isActive = params.channelId === item.publicId;
+    const isActive = params.channelPublicId === item.publicId;
     return {
       name: item.name,
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions

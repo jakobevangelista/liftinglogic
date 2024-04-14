@@ -61,6 +61,8 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
   },
 });
 
+export const createCallerFactory = t.createCallerFactory;
+
 /**
  * 3. ROUTER & PROCEDURE (THE IMPORTANT BIT)
  *
@@ -100,8 +102,6 @@ const enforcedUserIsAuthed = t.middleware(({ ctx, next }) => {
 export const authedProcedure = t.procedure.use(enforcedUserIsAuthed);
 
 const enforcedUserIsTeamCoach = t.middleware(async ({ ctx, next, input }) => {
-  console.log("deeznuts:", ctx.auth.userId);
-
   if (!ctx.auth.userId) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: "user not found" });
   }

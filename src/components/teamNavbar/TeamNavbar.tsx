@@ -1,13 +1,11 @@
-import { cn } from "@/lib/utils";
 import { db } from "@/server/db";
 import { conversations, teams, users } from "@/server/db/schema";
 import { UserButton } from "@clerk/nextjs";
-import { eq, ne, or } from "drizzle-orm";
-import { HomeIcon } from "lucide-react";
-import Link from "next/link";
+import { and, eq, ne, or } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import InviteModal from "../modals/invite-modal";
 import ChannelList from "./ChannelList";
+import CoachDashboardNav from "./CoachDashboardNav";
 import ConversationList from "./ConversationList";
 import TeamNavBarClient from "./TeamNavBarClient";
 
@@ -15,7 +13,7 @@ interface DashboardProps {
   user: { id: number; name: string; isCoach: boolean };
   params: {
     teamPublicId: string;
-    channelId?: string;
+    channelPublicId?: string;
     conversationsId?: string;
   };
 }
@@ -29,16 +27,24 @@ const TeamNavbar = async ({ user, params }: DashboardProps) => {
   });
 
   const userConversations = await db
-    .select()
+    .selectDistinct()
     .from(conversations)
     .innerJoin(
       users,
       or(
-        eq(conversations.userId1, user.id),
-        eq(conversations.userId2, user.id),
+        eq(conversations.userId1, users.id),
+        eq(conversations.userId2, users.id),
       ),
     )
-    .where(ne(users.id, user.id));
+    .where(
+      and(
+        or(
+          eq(conversations.userId1, user.id),
+          eq(conversations.userId2, user.id),
+        ),
+        ne(users.id, user.id),
+      ),
+    );
 
   if (!team) {
     return redirect("/team");
@@ -66,18 +72,7 @@ const TeamNavbar = async ({ user, params }: DashboardProps) => {
               <div className="-mx-2 mr-auto">
                 <InviteModal />
               </div>
-              <Link
-                href="/dashboard"
-                className={cn(
-                  // item.current
-                  //   ? "bg-gray-800 text-white"
-                  "-mx-2 text-gray-400 hover:bg-gray-800 hover:text-white",
-                  "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6",
-                )}
-              >
-                <HomeIcon className="h-6 w-6 shrink-0" aria-hidden="true" />
-                Team Dashboard
-              </Link>
+              <CoachDashboardNav teamPublicId={params.teamPublicId} />
             </>
           ) : (
             <div>{team.name} - Athlete</div>

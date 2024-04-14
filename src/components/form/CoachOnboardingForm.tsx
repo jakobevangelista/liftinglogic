@@ -40,17 +40,15 @@ export function CoachOnboardingForm({
   email,
 }: ProfileFormProps) {
   const router = useRouter();
-  const createCoach = api.client.createCoach.useMutation({
+  const createCoach = api.clientRouter.createCoach.useMutation({
     onSuccess: (data) => {
       const redirectUrl = `/team/${data.publicTeamId}`;
-      console.log(data);
       router.push(redirectUrl);
     },
     onError: (error) => {
       alert(
         `Error: failed to create coach, please try again. ${error.data?.code}`,
       );
-      console.log(error);
     },
   });
 
@@ -66,12 +64,12 @@ export function CoachOnboardingForm({
     },
   });
 
+  const { isSubmitting } = form.formState;
+
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-
-    console.log(values);
 
     createCoach.mutate({
       name: values.name,
@@ -135,7 +133,22 @@ export function CoachOnboardingForm({
           )}
         />
 
-        <Button type="submit">Submit</Button>
+        <Button disabled={isSubmitting} type="submit">
+          {/* Submit */}
+
+          {isSubmitting ? (
+            <div
+              className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+              role="status"
+            >
+              <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+                Loading...
+              </span>
+            </div>
+          ) : (
+            <span>Submit</span>
+          )}
+        </Button>
       </form>
     </Form>
   );

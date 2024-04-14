@@ -5,14 +5,14 @@ import { teams, users } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 
-interface DashboardProps {
+interface ChannelProps {
   params: {
     teamPublicId: string;
-    channelId: string;
+    channelPublicId: string;
   };
 }
 
-const Dashboard = async ({ params }: DashboardProps) => {
+const Channel = async ({ params }: ChannelProps) => {
   const user = await checkSignedin();
   const isPartOfTeam = await db.query.users.findFirst({
     where: eq(users.clerkId, user.id),
@@ -32,7 +32,10 @@ const Dashboard = async ({ params }: DashboardProps) => {
       `/team/${params.teamPublicId}/onboarding/${isPartOfTeam?.publicId}`,
     );
   }
-  console.log(isPartOfTeam);
+
+  const channel = await db.query.channels.findFirst({
+    where: eq(teams.publicId, params.channelPublicId),
+  });
 
   const handleButtonClick = async () => {
     "use server";
@@ -45,7 +48,7 @@ const Dashboard = async ({ params }: DashboardProps) => {
 
   return (
     <>
-      <div>Dashboard {team?.name}</div>
+      <div>Channel: {channel?.name}</div>
       <div>
         <form>
           <Button formAction={handleButtonClick}>deeznuts</Button>
@@ -55,4 +58,8 @@ const Dashboard = async ({ params }: DashboardProps) => {
   );
 };
 
-export default Dashboard;
+export default Channel;
+
+
+
+   // i want to put everything in paren.
